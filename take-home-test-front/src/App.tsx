@@ -1,14 +1,35 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import Dashboard from './components/Dashboard'
+import { useAppContext } from './store/context/ApplicationContext'
+
+
+const saveContextToLocalStorage = (currentContext) => {
+  return () => {
+    // TODO: test this behavior on different browsers
+    e.preventDefault();
+    localStorage.setItem('application_context', JSON.stringify({ value: currentContext.value }));
+    e.returnValue = undefined;
+    // return undefined;
+  };
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const context = useAppContext();
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", saveContextToLocalStorage(context));
+    return () => {
+      window.removeEventListener("beforeunload", saveContextToLocalStorage(context));
+    };
+  }, [context]);
 
   return (
     <>
       <div>
-
+        <Dashboard />
         <h1 className="text-3xl font-bold underline">
           Hello world!
         </h1>
